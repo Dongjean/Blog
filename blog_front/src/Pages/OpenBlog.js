@@ -1,5 +1,5 @@
 import {useLocation} from 'react-router-dom';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import CommentsSection from '../Components/CommentsSection';
 
 function OpenBlog(props) {
@@ -7,10 +7,11 @@ function OpenBlog(props) {
     const isViewerAuthor = (Data.CurrUser == Data.Username); //isViewerAuthor is true if Data.CurrUser = Data.Username, AKA the viewer is the author of the post
     const [isCommentsOpen, setCommentsOpenState] = useState(false); //comments are not open from the beginning by default
     const [Comments, setCommentsState] = useState(null);
+    const PostID = Data.PostID;
+    const [LikesCount, setLikesCount] = useState(0);
 
     //function called to delete the post
     async function DeletePost() {
-        const PostID = Data.PostID
 
         //send a POST request to /deleteblog with PostID in its body
         await fetch('http://localhost:3001/deleteblog', {
@@ -22,20 +23,40 @@ function OpenBlog(props) {
         props.Login(Data.Username, Data.DisplayName); //go back to the HomePage still logged in as the user
     }
 
-    async function getComments() {
-        const PostID = Data.PostID
+    function getComments() {
 
         //send a GET request to /getcomments with PostID as a parameter
-        const result = await fetch('http://localhost:3001/getcomments/' + PostID)
-        result.json().then(response => {
-            const Comments = response.res
-            setCommentsOpenState(true) //set the isCommentsOpen State to true to show comments
-            setCommentsState(Comments) //update the information stored in the Comments State
-        })
+        fetch('http://localhost:3001/getcomments/' + PostID).then(
+            res => res.json()
+        ).then(
+            response => {
+                const Comments = response.res
+                setCommentsOpenState(true) //set the isCommentsOpen State to true to show comments
+                setCommentsState(Comments) //update the information stored in the Comments State
+            }
+        )
     }
 
     function closeComments() {
         setCommentsOpenState(false) //set the isCommentsOpen State to false to hide comments
+    }
+
+    //only runs once on mount
+    useEffect(() => {
+        GetLikesCount()
+    }, [])
+
+    //method to get the number of likes for the post
+    function GetLikesCount() {
+        //send a GET request to /getlikes with PostID as a parameter
+        fetch('http://localhost:3001/getlikes/' + PostID).then(
+            res => res.json()
+        ).then(
+            response => {
+                const LikesCount = response.res
+                setLikesCount(LikesCount) //update the information stored in the LikesCount State
+            }
+        )
     }
 
     return (
@@ -44,6 +65,9 @@ function OpenBlog(props) {
             Author: {Data.DisplayName} <br /><br />
             <img src={`data:image/jpeg;base64,${Data.Image}`} alt={Data.ImageName} /> <br /> {/* Display the image base64 image data as an image */}
             {Data.PostText} <br />
+
+            {/* Displaying Post Likes Displayers */}
+            Likes: {LikesCount} <br />
 
             {isViewerAuthor ? <button onClick={DeletePost}>Delete Post</button> : null} {/* Only Displays if isViewerAuthor is true-if the viewer of the post is the author themselves, otherwise displays null. This button deletes the post */}
 

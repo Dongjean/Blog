@@ -14,11 +14,15 @@ async function AddUser(Data) {
         host: 'localhost',
       })
     client.connect();
-
-    //Insert the data on the new User into DB
-    await client.query(`INSERT INTO Users VALUES($1, $2, $3)`, [Data.NUsername, Data.NPassword, Data.NDisplay])
-
-    client.end();
+    
+    try {
+        //Insert the data on the new User into DB
+        await client.query(`INSERT INTO Users VALUES($1, $2, $3)`, [Data.NUsername, Data.NPassword, Data.NDisplay])
+    } catch(err) {
+        console.log(err)
+    } finally {
+        client.end();
+    }
 }
 
 
@@ -35,22 +39,23 @@ async function AddPost(Title, PostText, ImageName, ImageDir, AuthorUsername) {
       })
     client.connect();
 
-    //getting a unique PostID that doesnt already exist in the database
     try {
+
+        //getting a unique PostID that doesnt already exist in the database
         const result = await client.query(`SELECT PostID FROM BlogPost ORDER BY PostID ASC`)
         result.rows.forEach((row) => {
             if (PostID == row.postid) {
                 PostID++;
             }
         })
+
+        //add this post
+        await client.query(`INSERT INTO BlogPost VALUES($1, $2, $3, $4, $5, $6)`, [PostID, Title, PostText, ImageName, ImageDir, AuthorUsername])
     } catch(err) {
         console.log(err)
+    } finally {
+        client.end();   
     }
-
-    //add this post
-    await client.query(`INSERT INTO BlogPost VALUES($1, $2, $3, $4, $5, $6)`, [PostID, Title, PostText, ImageName, ImageDir, AuthorUsername])
-
-    client.end();
 }
 
 async function LoginServicer (Data) {
@@ -276,26 +281,29 @@ async function AddCommentServicer(Data) {
       })
     client.connect();
 
-    //getting a unique CommentID that doesnt already exist in the database
     try {
+
+        //getting a unique CommentID that doesnt already exist in the database
         const result = await client.query(`SELECT CommentID FROM Comments ORDER BY CommentID ASC`)
         result.rows.forEach((row) => {
             if (CommentID == row.commentid) {
                 CommentID++;
             }
         })
+
+        //get all the rest of the information on the new comment
+        const PostID = Data.PostID;
+        const Username = Data.Username;
+        const NewComment = Data.NewComment;
+    
+        await client.query(`INSERT INTO Comments VALUES($1, $2, $3, $4)`, [CommentID, PostID, Username, NewComment]) //add the new comment into the DB
+
     } catch(err) {
         console.log(err)
+    } finally {
+        client.end();
     }
-
-    //get all the rest of the information on the new comment
-    const PostID = Data.PostID;
-    const Username = Data.Username;
-    const NewComment = Data.NewComment;
-
-    await client.query(`INSERT INTO Comments VALUES($1, $2, $3, $4)`, [CommentID, PostID, Username, NewComment]) //add the new comment into the DB
-
-    client.end();
+    return {res: 'success!'} //respond with a successful message
 }
 
 async function DeleteCommentServicer(Data) {
@@ -310,9 +318,38 @@ async function DeleteCommentServicer(Data) {
       })
     client.connect();
 
-    await client.query(`DELETE FROM Comments WHERE CommentID=$1`, [Data.CommentID]) //Delete the Comment from DB
-
-    client.end();
+    try {
+        await client.query(`DELETE FROM Comments WHERE CommentID=$1`, [Data.CommentID]) //Delete the Comment from DB
+    } catch(err) {
+        console.log(err)
+    } finally {
+        client.end();
+    }
+    return {res: 'success!'} //respond with a successful message
 }
 
-module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer };
+async function GetLikesCountServicer(Data) {
+    var LikesCount;
+    
+    //connecting to DB
+    const client = new Client({
+        user: 'postgres',
+        database: 'blogserver',
+        password: 'sdj20041229',
+        port: 5432,
+        host: 'localhost',
+      })
+    client.connect();
+    
+    try{
+        const result = await client.query(`SELECT COUNT(Username) AS LikesCount FROM Likes WHERE PostID=$1 GROUP BY PostID`, [Data.PostID]) //querythe DB to get the number of likes for a post
+        LikesCount = result.rows[0].likescount
+    } catch(err) {
+        console.log(err)
+    } finally{
+        client.end();
+    }
+    return {res: LikesCount}
+}
+
+module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer, GetLikesCountServicer };
