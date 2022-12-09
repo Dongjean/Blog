@@ -226,6 +226,9 @@ async function DeleteBlogServicer(Data) {
         const PostID = await Data.PostID;
 
         try {
+            const result = await client.query(`SELECT ImgDir FROM BlogPost WHERE PostID = $1`, [PostID]) //query the DB for the directory of the image to delete from server
+            const ImgDir = result.rows[0].imgdir
+            fs.promises.unlink(ImgDir) //delete the image file at the directory ImgDir
             await client.query(`DELETE FROM BlogPost WHERE PostID=$1`, [PostID]) //Delete the Post with PostID given in Data from the DB
         } catch(err) {
             console.log(err)
