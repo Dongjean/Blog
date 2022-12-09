@@ -1,4 +1,3 @@
-
 function BlogPost(props) {
     return (
         <div>

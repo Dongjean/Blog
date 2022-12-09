@@ -27,7 +27,7 @@ function Main(props) {
             {Posts ? Posts.map(Post => { {/* iterate through the Posts array if Posts is not null, and each post is Post */}
                 return (
                     <div key={Post.PostID}>
-                        <button onClick={() => onClick(Post)}>
+                        <button onClick={() => onClick(Post)}> {/* Call the onClick method with parameter Post */}
                             <BlogPost Post={Post} /> {/* Display the specific Blog Post, passing in information of Post as a prop Post */}
                         </button>
                         <br />

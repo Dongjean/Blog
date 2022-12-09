@@ -28,7 +28,12 @@ router.get('/allblogs', (req, res) => {
 
 router.post('/deleteblog', (req, res) => {
     const Data = req.body;
-    Servicer.DeleteBlogServicer(Data).then(response => res.json(response))
+    Servicer.DeleteBlogServicer(Data).then(response => res.json(response)) //pass all the received data into the Service layer to be processed and then respond with the returned response
+})
+
+router.get('/getcomments/:PostID', (req, res) => {
+    const Data = req.params
+    Servicer.GetCommentsServicer(Data).then(response => res.json(response)) //pass all the received data into the Service layer to be processed and then respond with the returned response
 })
 
 module.exports = router;
