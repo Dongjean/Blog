@@ -2,6 +2,7 @@ import LoginPage from './Pages/Login.js';
 import MainPage from './Pages/Main.js';
 import SignupPage from './Pages/Signup.js';
 import PostBlogPage from './Pages/PostBlog.js';
+import OpenBlogPage from './Pages/OpenBlog.js'
 import {Routes, Route, useNavigate, Link} from 'react-router-dom';
 import {React, useState} from 'react';
 
@@ -12,8 +13,7 @@ function App() {
   const navigate = useNavigate();
   const [isLogin, setLoginState] = useState(false);
 
-
-  //for when login request is successful
+  //for when Client is to be rerouted back to the home page logged in to an account
   function Login(Username, DisplayName) {
 
     //set the current logged in user and its corresponding display name
@@ -25,7 +25,7 @@ function App() {
   }
 
   //for when user wants to logout
-  function Logout(){
+  function Logout() {
 
     //set the current logged in user and its corresponding display name to null
     Display = null;
@@ -35,6 +35,12 @@ function App() {
     navigate('/') //reroute to home page
   }
 
+  //for when user is opening up a specific blog from the home page
+  function OpenBlog(Post) {
+    var Data = Post;
+    Data.CurrUser = CurrUser;
+    navigate('/openblog', {state: Data})
+  }
   return (
     <div>
       { isLogin ? <div>Hello, {Display}!</div> : null } {/* display this only if isLogin is true-the user is logged in, display null otherwise */}
@@ -45,10 +51,11 @@ function App() {
       { isLogin ? <button onClick={Logout}>Logout</button> : null } {/* Display the Logout button only if isLogin is true-if there is a user logged in */}
 
       <Routes>
-        <Route path='/' exact element={<MainPage />} /> {/* Route to the Main Page*/}
+        <Route path='/' exact element={<MainPage OpenBlog={OpenBlog} />} /> {/* Route to the Main Page*/}
         <Route path='/signup' exact element={<SignupPage Login={Login} />} /> {/* Route to the Signup Page*/}
         <Route path='/login' exact element={<LoginPage Login={Login} />} /> {/* Route to the Login Page */}
         <Route path='/postblog' exact element={<PostBlogPage Author={CurrUser}/>} /> {/* Route to the Page to post a blog*/}
+        <Route path='/openblog' exact element={<OpenBlogPage />} /> {/* Route to the Page for an opened blog */}
       </Routes>
     </div>
   );

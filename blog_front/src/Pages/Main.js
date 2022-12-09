@@ -18,12 +18,16 @@ function Main(props) {
         )
     }, [])
 
+    function onClick(Post) {
+        props.OpenBlog(Post)
+    }
+
     return (
         <div>
             {Posts ? Posts.map(Post => { {/* iterate through the Posts array if Posts is not null, and each post is Post */}
                 return (
                     <div key={Post.PostID}>
-                        <button>
+                        <button onClick={() => onClick(Post)}>
                             <BlogPost Post={Post} /> {/* Display the specific Blog Post, passing in information of Post as a prop Post */}
                         </button>
                         <br />

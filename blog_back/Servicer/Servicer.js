@@ -188,7 +188,7 @@ async function GetAllBlogs() {
 
     var Posts = [];
     try{
-        const result = await client.query(`SELECT *  FROM BlogPost`) //select all the blog posts from DB
+        const result = await client.query('SELECT *  FROM BlogPost JOIN Users ON BlogPost.Username = Users.Username') //select all the blog posts from DB
         if (result.rows.length == 0) { //if no posts exists in DB, end connection to DB and respon with a null
             client.end();
             return {res: null}
@@ -199,8 +199,8 @@ async function GetAllBlogs() {
         for (var i=0; i<result.rows.length; i++) {
             row = result.rows[i]
             ImageBuffer = await fs.promises.readFile(row.imgdir) //get Buffer data of the image using the directory stored in the DB
-            
-            Posts[i] = {PostID: row.postid, Title: row.title, PostText: row.posttext, ImageName: row.imgname, Image: ImageBuffer.toString('base64') /* convert the Image Buffer Data into a base64 string such that it can be easily displayed on front end */, Username: row.username} //add to array Posts
+
+            Posts[i] = {PostID: row.postid, Title: row.title, PostText: row.posttext, ImageName: row.imgname, Image: ImageBuffer.toString('base64') /* convert the Image Buffer Data into a base64 string such that it can be easily displayed on front end */, Username: row.username, DisplayName: row.displayname} //add to array Posts
         }
     } finally{
         client.end();
