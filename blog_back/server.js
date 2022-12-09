@@ -4,9 +4,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded());
-
-const { Client } = require('pg')
+app.use(express.urlencoded())
 
 const Controller = require('./Controller/Controller.js')
 
