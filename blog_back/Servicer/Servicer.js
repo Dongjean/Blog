@@ -254,7 +254,7 @@ async function GetCommentsServicer(Data) {
     client.connect();
 
     try {
-        const result = await client.query(`SELECT CommentID, Comment, DisplayName FROM Comments JOIN Users ON Comments.Username = Users.Username WHERE Comments.PostID = $1`, [PostID]) //query the DB for all Comments with corresponding CommentID and DisplayName
+        const result = await client.query(`SELECT CommentID, Users.Username, Comment, DisplayName FROM Comments JOIN Users ON Comments.Username = Users.Username WHERE Comments.PostID = $1`, [PostID]) //query the DB for all Comments with corresponding CommentID, Username and DisplayName
         Comments = result.rows //put the resultant array of Comment information into Comments
     } catch(err) {
         console.log(err)
@@ -298,4 +298,21 @@ async function AddCommentServicer(Data) {
     client.end();
 }
 
-module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer };
+async function DeleteCommentServicer(Data) {
+
+    //connecting to DB
+    const client = new Client({
+        user: 'postgres',
+        database: 'blogserver',
+        password: 'sdj20041229',
+        port: 5432,
+        host: 'localhost',
+      })
+    client.connect();
+
+    await client.query(`DELETE FROM Comments WHERE CommentID=$1`, [Data.CommentID]) //Delete the Comment from DB
+
+    client.end();
+}
+
+module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer };

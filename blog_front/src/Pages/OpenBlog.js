@@ -12,7 +12,7 @@ function OpenBlog(props) {
     async function DeletePost() {
         const PostID = Data.PostID
 
-        //send a POST request to /deleteblog with FD in its body
+        //send a POST request to /deleteblog with PostID in its body
         await fetch('http://localhost:3001/deleteblog', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -50,7 +50,7 @@ function OpenBlog(props) {
             {/* Displays Button to open the Comments section if not already open, and a Button to close it if it already is open */}
             {isCommentsOpen ? 
             <div>
-                <CommentsSection Comments={Comments} PostID={Data.PostID} CurrUser={Data.CurrUser} /> {/* Display the comments section */}
+                <CommentsSection Comments={Comments} PostID={Data.PostID} CurrUser={Data.CurrUser} getComments={getComments} /> {/* Display the comments section */}
                 <button onClick={closeComments}>Close Comments</button> {/* Display the close button */}
             </div> :
             <button onClick={getComments}>See Comments</button>} {/* Display the open button */}
