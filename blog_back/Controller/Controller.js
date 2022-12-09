@@ -36,4 +36,8 @@ router.get('/getcomments/:PostID', (req, res) => {
     Servicer.GetCommentsServicer(Data).then(response => res.json(response)) //pass all the received data into the Service layer to be processed and then respond with the returned response
 })
 
+router.post('/addcomment', (req, res) => {
+    const Data = req.body;
+    Servicer.AddCommentServicer(Data).then(response => res.json(response)) //pass all the received data into the Service layer to be processed and then respond with the returned response
+})
 module.exports = router;

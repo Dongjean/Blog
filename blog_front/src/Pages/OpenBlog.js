@@ -50,10 +50,10 @@ function OpenBlog(props) {
             {/* Displays Button to open the Comments section if not already open, and a Button to close it if it already is open */}
             {isCommentsOpen ? 
             <div>
-                <CommentsSection Comments={Comments} /> {/* Display the comments section */}
+                <CommentsSection Comments={Comments} PostID={Data.PostID} CurrUser={Data.CurrUser} /> {/* Display the comments section */}
                 <button onClick={closeComments}>Close Comments</button> {/* Display the close button */}
             </div> :
-            <button onClick={getComments}>Comments</button>} {/* Display the open button */}
+            <button onClick={getComments}>See Comments</button>} {/* Display the open button */}
         </div>
     )
 }

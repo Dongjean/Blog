@@ -38,8 +38,8 @@ async function AddPost(Title, PostText, ImageName, ImageDir, AuthorUsername) {
     //getting a unique PostID that doesnt already exist in the database
     try {
         const result = await client.query(`SELECT PostID FROM BlogPost ORDER BY PostID ASC`)
-        result.rows.forEach((ID) => {
-            if (PostID == ID.postid) {
+        result.rows.forEach((row) => {
+            if (PostID == row.postid) {
                 PostID++;
             }
         })
@@ -229,6 +229,7 @@ async function DeleteBlogServicer(Data) {
             const result = await client.query(`SELECT ImgDir FROM BlogPost WHERE PostID = $1`, [PostID]) //query the DB for the directory of the image to delete from server
             const ImgDir = result.rows[0].imgdir
             fs.promises.unlink(ImgDir) //delete the image file at the directory ImgDir
+            await client.query(`DELETE FROM Comments WHERE PostID=$1`, [PostID]) //Delete all Comments related to this Post
             await client.query(`DELETE FROM BlogPost WHERE PostID=$1`, [PostID]) //Delete the Post with PostID given in Data from the DB
         } catch(err) {
             console.log(err)
@@ -263,4 +264,38 @@ async function GetCommentsServicer(Data) {
     return {res: Comments} //respond with this array with key 'res'
 }
 
-module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs, DeleteBlogServicer, GetCommentsServicer };
+async function AddCommentServicer(Data) {
+    var CommentID = 1;
+    //connecting to DB
+    const client = new Client({
+        user: 'postgres',
+        database: 'blogserver',
+        password: 'sdj20041229',
+        port: 5432,
+        host: 'localhost',
+      })
+    client.connect();
+
+    //getting a unique CommentID that doesnt already exist in the database
+    try {
+        const result = await client.query(`SELECT CommentID FROM Comments ORDER BY CommentID ASC`)
+        result.rows.forEach((row) => {
+            if (CommentID == row.commentid) {
+                CommentID++;
+            }
+        })
+    } catch(err) {
+        console.log(err)
+    }
+
+    //get all the rest of the information on the new comment
+    const PostID = Data.PostID;
+    const Username = Data.Username;
+    const NewComment = Data.NewComment;
+
+    await client.query(`INSERT INTO Comments VALUES($1, $2, $3, $4)`, [CommentID, PostID, Username, NewComment]) //add the new comment into the DB
+
+    client.end();
+}
+
+module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer };
