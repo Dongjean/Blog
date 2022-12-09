@@ -26,4 +26,9 @@ router.get('/allblogs', (req, res) => {
     Servicer.GetAllBlogs().then(response => res.json(response)) //call the Service layer for a reponse, and respond with this response
 })
 
+router.post('/deleteblog', (req, res) => {
+    const Data = req.body;
+    Servicer.DeleteBlogServicer(Data).then(response => res.json(response))
+})
+
 module.exports = router;

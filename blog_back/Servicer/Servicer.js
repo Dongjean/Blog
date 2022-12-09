@@ -126,7 +126,7 @@ async function PostBlogServicer (Data, Image) {
 
     //get a unique file name and store the image as that name in server
     var ImageDir;
-    try{
+    try {
         const files = await fs.promises.readdir(FileDir) //read all file names in the Images blog_post/blog_back/Images directory
         var name = 1; //image names start with 1
         files.forEach(function (file) { //iterate through the file names
@@ -187,7 +187,7 @@ async function GetAllBlogs() {
     client.connect();
 
     var Posts = [];
-    try{
+    try {
         const result = await client.query('SELECT *  FROM BlogPost JOIN Users ON BlogPost.Username = Users.Username') //select all the blog posts from DB
         if (result.rows.length == 0) { //if no posts exists in DB, end connection to DB and respon with a null
             client.end();
@@ -202,10 +202,37 @@ async function GetAllBlogs() {
 
             Posts[i] = {PostID: row.postid, Title: row.title, PostText: row.posttext, ImageName: row.imgname, Image: ImageBuffer.toString('base64') /* convert the Image Buffer Data into a base64 string such that it can be easily displayed on front end */, Username: row.username, DisplayName: row.displayname} //add to array Posts
         }
-    } finally{
+    } catch(err) {
+        console.log(err)
+    } finally {
         client.end();
     }
     return {res: Posts} //respond with the data of the Posts
 }
 
-module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs };
+async function DeleteBlogServicer(Data) {
+
+        //connect to DB
+        const client = new Client({
+            user: 'postgres',
+            database: 'blogserver',
+            password: 'sdj20041229',
+            port: 5432,
+            host: 'localhost',
+          })
+        client.connect();
+
+        //get PostID to Delete
+        const PostID = await Data.PostID;
+
+        try {
+            await client.query(`DELETE FROM BlogPost WHERE PostID=$1`, [PostID]) //Delete the Post with PostID given in Data from the DB
+        } catch(err) {
+            console.log(err)
+        } finally {
+            client.end();
+        }
+        return {res: 'success!'} //respond with a successful message
+}
+
+module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs, DeleteBlogServicer };

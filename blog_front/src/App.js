@@ -41,6 +41,7 @@ function App() {
     Data.CurrUser = CurrUser;
     navigate('/openblog', {state: Data})
   }
+  
   return (
     <div>
       { isLogin ? <div>Hello, {Display}!</div> : null } {/* display this only if isLogin is true-the user is logged in, display null otherwise */}
@@ -55,7 +56,7 @@ function App() {
         <Route path='/signup' exact element={<SignupPage Login={Login} />} /> {/* Route to the Signup Page*/}
         <Route path='/login' exact element={<LoginPage Login={Login} />} /> {/* Route to the Login Page */}
         <Route path='/postblog' exact element={<PostBlogPage Author={CurrUser}/>} /> {/* Route to the Page to post a blog*/}
-        <Route path='/openblog' exact element={<OpenBlogPage />} /> {/* Route to the Page for an opened blog */}
+        <Route path='/openblog' exact element={<OpenBlogPage Login={Login} />} /> {/* Route to the Page for an opened blog */}
       </Routes>
     </div>
   );
