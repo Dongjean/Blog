@@ -330,7 +330,7 @@ async function DeleteCommentServicer(Data) {
 
 async function GetLikesCountServicer(Data) {
     var LikesCount;
-    
+
     //connecting to DB
     const client = new Client({
         user: 'postgres',
@@ -352,4 +352,77 @@ async function GetLikesCountServicer(Data) {
     return {res: LikesCount}
 }
 
-module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer, GetLikesCountServicer };
+async function GetLikedStateServicer(Data) {
+    var isLiked = false;
+
+    //connecting to DB
+    const client = new Client({
+        user: 'postgres',
+        database: 'blogserver',
+        password: 'sdj20041229',
+        port: 5432,
+        host: 'localhost',
+      })
+    client.connect();
+
+    try{
+        const result = await client.query(`SELECT Username FROM Likes WHERE PostID=$1`, [Data.PostID]) //query the DB to get the number of likes for a post
+        for (var i=0; i<result.rows.length; i++) { //iterates through the resultant response from the query
+            if (result.rows[i].username == Data.CurrUser) {
+                isLiked = true //makes isLiked true only if the current user's Username exists in this response AKA User already Liked the Post
+                break
+            }
+        }
+    } catch(err) {
+        console.log(err)
+    } finally{
+        client.end();
+    }
+    return {res: isLiked}
+}
+
+async function AddLikeServicer(Data) {
+
+    //connecting to DB
+    const client = new Client({
+        user: 'postgres',
+        database: 'blogserver',
+        password: 'sdj20041229',
+        port: 5432,
+        host: 'localhost',
+      })
+    client.connect();
+
+    try{
+        const result = await client.query(`INSERT INTO Likes VALUES($1, $2)`, [Data.PostID, Data.CurrUser]) //Adds the like record into the DB
+    } catch(err) {
+        console.log(err)
+    } finally{
+        client.end();
+    }
+    return {res: 'success!'}
+}
+
+async function RemoveLikeServicer(Data) {
+
+    //connecting to DB
+    const client = new Client({
+        user: 'postgres',
+        database: 'blogserver',
+        password: 'sdj20041229',
+        port: 5432,
+        host: 'localhost',
+      })
+    client.connect();
+
+    try{
+        const result = await client.query(`DELETE FROM Likes WHERE PostID=$1 AND Username=$2`, [Data.PostID, Data.CurrUser]) //Removes the like record from the DB
+    } catch(err) {
+        console.log(err)
+    } finally{
+        client.end();
+    }
+    return {res: 'success!'}
+}
+
+module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer, GetLikesCountServicer, GetLikedStateServicer, AddLikeServicer, RemoveLikeServicer };

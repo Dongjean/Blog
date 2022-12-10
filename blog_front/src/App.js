@@ -52,7 +52,7 @@ function App() {
       { isLogin ? <button onClick={Logout}>Logout</button> : null } {/* Display the Logout button only if isLogin is true-if there is a user logged in */}
 
       <Routes>
-        <Route path='/' exact element={<MainPage OpenBlog={OpenBlog} />} /> {/* Route to the Main Page*/}
+        <Route path='/' exact element={<MainPage OpenBlog={OpenBlog} CurrUser={CurrUser} />} /> {/* Route to the Main Page*/}
         <Route path='/signup' exact element={<SignupPage Login={Login} />} /> {/* Route to the Signup Page*/}
         <Route path='/login' exact element={<LoginPage Login={Login} />} /> {/* Route to the Login Page */}
         <Route path='/postblog' exact element={<PostBlogPage Author={CurrUser}/>} /> {/* Route to the Page to post a blog*/}

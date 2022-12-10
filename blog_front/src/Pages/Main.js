@@ -3,6 +3,7 @@ import BlogPost from '../Components/BlogPost.js'
 
 function Main(props) {
     const [Posts, setPosts] = useState(null)
+    const CurrUser = props.CurrUser;
 
     //runs only on mount
     useEffect( () => {
@@ -28,7 +29,7 @@ function Main(props) {
                 return (
                     <div key={Post.PostID}>
                         <button onClick={() => onClick(Post)}> {/* Call the onClick method with parameter Post */}
-                            <BlogPost Post={Post} /> {/* Display the specific Blog Post, passing in information of Post as a prop Post */}
+                            <BlogPost Post={Post} CurrUser={CurrUser} /> {/* Display the specific Blog Post, passing in information of Post as a prop Post */}
                         </button>
                         <br />
                     </div>

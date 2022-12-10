@@ -1,6 +1,7 @@
 import {useLocation} from 'react-router-dom';
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import CommentsSection from '../Components/CommentsSection';
+import LikesSection from '../Components/LikesSection';
 
 function OpenBlog(props) {
     const Data = useLocation().state; //get data about Post from App.js
@@ -8,7 +9,6 @@ function OpenBlog(props) {
     const [isCommentsOpen, setCommentsOpenState] = useState(false); //comments are not open from the beginning by default
     const [Comments, setCommentsState] = useState(null);
     const PostID = Data.PostID;
-    const [LikesCount, setLikesCount] = useState(0);
 
     //function called to delete the post
     async function DeletePost() {
@@ -41,24 +41,6 @@ function OpenBlog(props) {
         setCommentsOpenState(false) //set the isCommentsOpen State to false to hide comments
     }
 
-    //only runs once on mount
-    useEffect(() => {
-        GetLikesCount()
-    }, [])
-
-    //method to get the number of likes for the post
-    function GetLikesCount() {
-        //send a GET request to /getlikes with PostID as a parameter
-        fetch('http://localhost:3001/getlikes/' + PostID).then(
-            res => res.json()
-        ).then(
-            response => {
-                const LikesCount = response.res
-                setLikesCount(LikesCount) //update the information stored in the LikesCount State
-            }
-        )
-    }
-
     return (
         <div> {/* diplaying the blog post itself first */}
             <h1>Title: {Data.Title}</h1> <br />
@@ -66,8 +48,8 @@ function OpenBlog(props) {
             <img src={`data:image/jpeg;base64,${Data.Image}`} alt={Data.ImageName} /> <br /> {/* Display the image base64 image data as an image */}
             {Data.PostText} <br />
 
-            {/* Displaying Post Likes Displayers */}
-            Likes: {LikesCount} <br />
+            {/* Displaying Post's Likes and buttons to like and unlike */}
+            <LikesSection CurrUser={Data.CurrUser} PostID={Data.PostID} />
 
             {isViewerAuthor ? <button onClick={DeletePost}>Delete Post</button> : null} {/* Only Displays if isViewerAuthor is true-if the viewer of the post is the author themselves, otherwise displays null. This button deletes the post */}
 
