@@ -425,4 +425,29 @@ async function RemoveLikeServicer(Data) {
     return {res: 'success!'}
 }
 
-module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer, GetLikesCountServicer, GetLikedStateServicer, AddLikeServicer, RemoveLikeServicer };
+async function GetAllCatsServicer() {
+    var Cats;
+
+    //connecting to DB
+    const client = new Client({
+        user: 'postgres',
+        database: 'blogserver',
+        password: 'sdj20041229',
+        port: 5432,
+        host: 'localhost',
+      })
+    client.connect();
+
+    try{
+        const result = await client.query(`SELECT * FROM Categories`) //Queries the DB for all Categories
+        Cats = result.rows
+
+    } catch(err) {
+        console.log(err)
+    } finally{
+        client.end();
+    }
+    return {res: Cats}
+}
+
+module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer, GetLikesCountServicer, GetLikedStateServicer, AddLikeServicer, RemoveLikeServicer, GetAllCatsServicer };

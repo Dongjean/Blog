@@ -22,7 +22,7 @@ router.post('/postblog', fileUpload({createParentPath: true}) /*use the middlewa
     Servicer.PostBlogServicer(Data, Image).then(response => res.json(response)) //pass all the received data into the Service layer to be processed and then respond with the returned response
 })
 
-router.get('/allblogs', (req, res) => {
+router.get('/getallblogs', (req, res) => {
     Servicer.GetAllBlogs().then(response => res.json(response)) //call the Service layer for a reponse, and respond with this response
 })
 
@@ -64,6 +64,10 @@ router.post('/addlike', (req, res) => {
 router.post('/removelike', (req, res) => {
     const Data = req.body;
     Servicer.RemoveLikeServicer(Data).then(response => res.json(response)) //pass all the received data into the Service layer to be processed and then respond with the returned response
+})
+
+router.get('/getallcats', (req, res) => {
+    Servicer.GetAllCatsServicer().then(response => res.json(response)) //call the Service layer for a reponse, and respond with this response
 })
 
 module.exports = router;
