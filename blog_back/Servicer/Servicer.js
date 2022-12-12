@@ -179,7 +179,14 @@ async function PostBlogServicer (Data, Image) {
     return {res: 'success!'} //respond with a successful message
 }
 
-async function GetAllBlogs() {
+async function GetBlogs(Data) {
+
+    //getting the received Categories data into an array of integers
+    var Cats = Data.Cats;
+    Cats = Cats.split(',')
+    for (var i=0; i<Cats.length; i++) {
+        Cats[i] = parseInt(Cats[i])
+    }
 
     //connect to DB
     const client = new Client({
@@ -193,7 +200,7 @@ async function GetAllBlogs() {
 
     var Posts = [];
     try {
-        const result = await client.query('SELECT *  FROM BlogPost JOIN Users ON BlogPost.Username = Users.Username') //select all the blog posts from DB
+        const result = await client.query('SELECT *  FROM (SELECT * FROM BlogPost JOIN Users ON BlogPost.Username = Users.Username) X JOIN PostCategories Y ON X.PostID=Y.PostID WHERE Y.CategoryID = ANY($1::int[])', [Cats]) //select the blog posts from DB
         if (result.rows.length == 0) { //if no posts exists in DB, end connection to DB and respon with a null
             client.end();
             return {res: null}
@@ -439,7 +446,7 @@ async function GetAllCatsServicer() {
     client.connect();
 
     try{
-        const result = await client.query(`SELECT * FROM Categories`) //Queries the DB for all Categories
+        const result = await client.query(`SELECT * FROM Categories ORDER BY CategoryID ASC`) //Queries the DB for all Categories
         Cats = result.rows
 
     } catch(err) {
@@ -450,4 +457,4 @@ async function GetAllCatsServicer() {
     return {res: Cats}
 }
 
-module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetAllBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer, GetLikesCountServicer, GetLikedStateServicer, AddLikeServicer, RemoveLikeServicer, GetAllCatsServicer };
+module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer, GetLikesCountServicer, GetLikedStateServicer, AddLikeServicer, RemoveLikeServicer, GetAllCatsServicer };

@@ -4,6 +4,8 @@ import BlogPost from '../Components/BlogPost.js'
 function Main(props) {
     const [Posts, setPosts] = useState(null)
     const [Cats, setCats] = useState(null)
+    const [SelectedCats, setSelectedCats] = useState([{ categoryid: 0, category: 'All'}])
+
     const CurrUser = props.CurrUser;
 
     //runs only on mount
@@ -11,8 +13,10 @@ function Main(props) {
         GetAllCats()
     }, [])
 
-    function GetAllBlogs() {
-        fetch('http://localhost:3001/getallblogs').then( //fetches all the blog posts from backend
+    function GetBlogs(Cats) {
+        const StrCats = Cats.map(Cat => {return Cat.categoryid}).toString() //converts the array of Categories into a string format to be sent in GET request
+
+        fetch('http://localhost:3001/getblogs/' + StrCats).then( //fetches the blog posts under the requested categories from backend
             res => {
                 return res.json()
             }
@@ -25,7 +29,7 @@ function Main(props) {
     }
 
     function GetAllCats() {
-        fetch('http://localhost:3001/getallcats').then( //fetches all the blog posts from backend
+        fetch('http://localhost:3001/getallcats').then( //fetches all the categories from backend
             res => {
                 return res.json()
             }
@@ -34,7 +38,7 @@ function Main(props) {
                 const AllCats = response.res //response is an array of Categories
                 setCats(AllCats) //sets the Categories state to the response
 
-                GetAllBlogs() //get all the blogs for all categories after the categories have been received
+                GetBlogs(SelectedCats) //get all the blogs for all categories after the categories have been received
             }
         )
     }
@@ -45,6 +49,7 @@ function Main(props) {
 
     return (
         <div>
+            {/* Displays All Categories if it is not null */}
             {Cats ? Cats.map(Cat => {
                 return (
                     <div key={Cat.categoryid}>
