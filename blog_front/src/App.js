@@ -40,13 +40,14 @@ function App() {
   //for when user is opening up a specific blog from the home page
   function OpenBlog(Post) {
     var Data = Post;
-    Data.CurrUser = CurrUser;
+    Data.CurrUser = CurrUser; //adds CurrUser to Data
     navigate('/openblog', {state: Data})
   }
   
+  //function for updating a post
   function UpdatePost(Post, Cats) {
     var Data = Post;
-    Data.Cats = Cats;
+    Data.Cats = Cats; //adds Cats to Data
     navigate('/updatepost', {state: Data})
   }
   
@@ -67,7 +68,7 @@ function App() {
         <Route path='/postblog' exact element={<PostBlogPage Author={CurrUser}/>} /> {/* Route to the Page to post a blog*/}
         <Route path='/openblog' exact element={<OpenBlogPage Login={Login} UpdatePost={UpdatePost} />} /> {/* Route to the Page for an opened blog */}
         <Route path='/createcategory' exact element={<AddCategory CurrUser={CurrUser} DisplayName={Display} Login={Login} />} /> {/* Route to the Page to create a new category */}
-        <Route path='/updatepost' exact element={<UpdatePostPage />} />
+        <Route path='/updatepost' exact element={<UpdatePostPage />} /> {/* Route to the Page to update a Post */}
       </Routes>
     </div>
   );

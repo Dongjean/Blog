@@ -11,7 +11,7 @@ function PostBlog(props) {
     useEffect(() => {
         GetAllCats()
     }, [])
-    
+
     function addpost (event) {
         event.preventDefault(); //prevent form from refreshing upon submit
 
@@ -63,11 +63,11 @@ function PostBlog(props) {
                 Categories: {Cats ? Cats.map(Cat => {
                     return (
                         <div key={Cat.categoryid}>
-                            <input type='checkbox' onClick={() => AddCat(Cat.categoryid)}/>
+                            <input type='checkbox' onClick={() => AddCat(Cat.categoryid)}/> {/* Checkbox for category */}
                             {Cat.category}
                         </div>
                     )
-                }) : null} <br />
+                }) : null} <br /> {/* If Cats has been fetched, display the category selection option */}
                 Post Image: <input type='file' required ref={ImageRef} /> <br />
                 <textarea required ref={PostTextRef} rows='4' cols='50'></textarea> <br />
                 <input type='submit' value='submit' />

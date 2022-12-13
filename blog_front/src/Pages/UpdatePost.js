@@ -44,6 +44,7 @@ function UpdatePost() {
         })
     }
 
+    //gets all categories
     function GetAllCats() {
 
         fetch('http://localhost:3001/getallcats').then( //fetches all the categories from backend
@@ -89,8 +90,8 @@ function UpdatePost() {
             Update your Blog! <br />
             <form onSubmit={addpost}> {/* form calls onSubmit() method on submittion of form */}
                 Post Title: <input type='text' required ref={TitleRef} placeholder={OGPost.Title}/> <br />
-                {/* Displays the categories */}
 
+                {/* Displays the Selectedcategories */}
                 {SelectedCats ? SelectedCats.map(Cat => {
                     return (
                         <div>
@@ -98,6 +99,8 @@ function UpdatePost() {
                         </div>
                     )
                 }) : null}
+
+                {/* Displays the Selectedcategories */}
                 {UnselectedCats ? UnselectedCats.map(Cat => {
                     return (
                         <div>

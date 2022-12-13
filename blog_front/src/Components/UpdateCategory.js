@@ -5,9 +5,9 @@ function UpdateCategory(props) {
 
     function UpdateCateSelection(CatID, CatName) {
         if (props.Checked == true) {
-            props.DeselectCat(CatID, CatName)
+            props.DeselectCat(CatID, CatName) //if Category was previously selected, it is now to be deselected
         } else {
-            props.SelectCat(CatID, CatName)
+            props.SelectCat(CatID, CatName) //if Category was previously not selected, it is now to be selected
         }
     }
 

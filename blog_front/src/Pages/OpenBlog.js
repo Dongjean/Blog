@@ -65,8 +65,8 @@ function OpenBlog(props) {
         <div> {/* diplaying the blog post itself first */}
             <h1>Title: {Data.Title}</h1> <br />
             Author: {Data.DisplayName} <br /><br />
-            Categories: {Cats.filter(Cat => Cat.categoryid !== 0).map(Cat => {
-                return <div key={Cat.categoryid}>{Cat.category}</div>
+            Categories: {Cats.filter(Cat => Cat.categoryid !== 0).map(Cat => { //Cats.filter..... returns the array of Categories Cats without the All Category
+                return <div key={Cat.categoryid}>{Cat.category}</div> //Displays the Category
             })}
             <br />
             <img src={`data:image/jpeg;base64,${Data.Image}`} alt={Data.ImageName} /> <br /> {/* Display the image base64 image data as an image */}

@@ -48,13 +48,13 @@ function Main(props) {
     }
 
     function AddCatSelection(Cat) {
-        SelectedCats.current = SelectedCats.current.filter(SelectedCat => SelectedCat.categoryid !== -1)
-        SelectedCats.current.push(Cat)
+        SelectedCats.current = SelectedCats.current.filter(SelectedCat => SelectedCat.categoryid !== -1) //removes null category from SelectedCats.current
+        SelectedCats.current.push(Cat) //adds Category Cat to SelectedCats.current
         GetBlogs(SelectedCats.current) //get all the blogs for all categories after the selected categories have been modified
     }
 
     function RemoveCatSelection(Cat) {
-        SelectedCats.current = SelectedCats.current.filter(SelectedCat => SelectedCat.categoryid !== Cat.categoryid)
+        SelectedCats.current = SelectedCats.current.filter(SelectedCat => SelectedCat.categoryid !== Cat.categoryid) //removes Category Cat from SelectdCats.current
 
         //if after removal SelectedCats.current is empty, add the nullCat
         if (SelectedCats.current.length == 0) {
