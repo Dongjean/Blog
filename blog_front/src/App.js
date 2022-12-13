@@ -39,6 +39,7 @@ function App() {
   function OpenBlog(Post) {
     var Data = Post;
     Data.CurrUser = CurrUser;
+    console.log(Data)
     navigate('/openblog', {state: Data})
   }
   

@@ -19,9 +19,9 @@ function Main(props) {
         const StrCats = Cats.map(Cat => {return Cat.categoryid}).toString() //converts the array of Categories into a string format to be sent in GET request
 
         fetch('http://localhost:3001/getblogs/' + StrCats).then( //fetches the blog posts under the requested categories from backend
-        res => {
-            return res.json()
-        }
+            res => {
+                return res.json()
+            }
         ).then(
             response => {
                 const Posts = response.res //response is an array of Posts if blog posts exists, and null otherwise

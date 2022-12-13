@@ -27,7 +27,7 @@ async function AddUser(Data) {
 
 
 //for adding a Blog Post
-async function AddPost(Title, PostText, ImageName, ImageDir, AuthorUsername) {
+async function AddPost(Title, PostText, ImageName, ImageDir, AuthorUsername, PostCategories) {
     var PostID = 1;
     //connecting to DB
     const client = new Client({
@@ -49,8 +49,17 @@ async function AddPost(Title, PostText, ImageName, ImageDir, AuthorUsername) {
             }
         })
 
-        //add this post
+        //add this post to BlogPost table
         await client.query(`INSERT INTO BlogPost VALUES($1, $2, $3, $4, $5, $6)`, [PostID, Title, PostText, ImageName, ImageDir, AuthorUsername])
+
+        //add this post to PostCategories table
+        for (var i=0; i<PostCategories.length; i++) {
+            const PostCategory = PostCategories[i]
+            await client.query(`INSERT INTO PostCategories VALUES($1, $2)`, [PostCategory, PostID])
+        }
+
+        //add this post to PostCategories table for All
+        await client.query(`INSERT INTO PostCategories VALUES(0, $1)`, [PostID])
     } catch(err) {
         console.log(err)
     } finally {
@@ -173,8 +182,9 @@ async function PostBlogServicer (Data, Image) {
     const PostText = Data.PostText
     const AuthorUsername = Data.AuthorUsername;
     const ImageName = Image.name
+    const PostCategories = Data.Categories.split(',');
 
-    AddPost(Title, PostText, ImageName, ImageDir, AuthorUsername); //add the post using the method AddPost()
+    AddPost(Title, PostText, ImageName, ImageDir, AuthorUsername, PostCategories); //add the post using the method AddPost()
     
     return {res: 'success!'} //respond with a successful message
 }
@@ -200,8 +210,9 @@ async function GetBlogs(Data) {
 
     var Posts = [];
     try {
-        const result = await client.query('SELECT *  FROM (SELECT * FROM BlogPost JOIN Users ON BlogPost.Username = Users.Username) X JOIN PostCategories Y ON X.PostID=Y.PostID WHERE Y.CategoryID = ANY($1::int[])', [Cats]) //select the blog posts from DB
-        if (result.rows.length == 0) { //if no posts exists in DB, end connection to DB and respon with a null
+        console.log(Cats)
+        const result = await client.query(`SELECT DISTINCT X.PostID, X.Title, X.PostText, X.ImgName, X.ImgDir, X.Username, X.DisplayName FROM (SELECT BlogPost.PostID, BlogPost.Title, BlogPost.PostText, BlogPost.ImgName, BlogPost.ImgDir, Users.Username, Users.DisplayName FROM BlogPost JOIN Users ON BlogPost.Username = Users.Username) X JOIN PostCategories Y ON X.PostID=Y.PostID WHERE Y.CategoryID = ANY($1::int[])`, [Cats]) //select the blog posts from DB
+        if (result.rows.length == 0) { //if no posts exists in DB, end connection to DB and respond with a null
             client.end();
             return {res: null}
         }
@@ -350,7 +361,11 @@ async function GetLikesCountServicer(Data) {
     
     try{
         const result = await client.query(`SELECT COUNT(Username) AS LikesCount FROM Likes WHERE PostID=$1 GROUP BY PostID`, [Data.PostID]) //querythe DB to get the number of likes for a post
-        LikesCount = result.rows[0].likescount
+        if(result.rows.length == 0) {
+            LikesCount = 0;
+        } else {
+            LikesCount = result.rows[0].likescount
+        }
     } catch(err) {
         console.log(err)
     } finally{
