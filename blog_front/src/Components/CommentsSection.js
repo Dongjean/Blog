@@ -1,4 +1,6 @@
+//Components imports
 import Comment from './Comment.js';
+
 import { React, useRef } from 'react';
 
 function CommentsSection(props) {

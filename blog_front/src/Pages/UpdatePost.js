@@ -1,6 +1,8 @@
+//Components imports
+import UpdateCategory from '../Components/UpdateCategory.js';
+
 import { React, useRef, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import UpdateCategory from '../Components/UpdateCategory.js';
 
 function UpdatePost(props) {
     const OGPost = useLocation().state;

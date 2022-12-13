@@ -1,10 +1,13 @@
+//Pages imports
 import LoginPage from './Pages/Login.js';
 import MainPage from './Pages/Main.js';
 import SignupPage from './Pages/Signup.js';
 import PostBlogPage from './Pages/PostBlog.js';
 import OpenBlogPage from './Pages/OpenBlog.js';
-import AddCategory from './Components/AddCategory.js';
 import UpdatePostPage from './Pages/UpdatePost.js';
+import AddCategory from './Components/AddCategory.js';
+
+
 import {Routes, Route, useNavigate, Link} from 'react-router-dom';
 import {React, useState} from 'react';
 

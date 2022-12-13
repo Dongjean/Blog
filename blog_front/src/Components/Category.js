@@ -1,4 +1,4 @@
-import {React, useState, useEffect, useRef} from 'react';
+import { React, useState, useEffect, useRef } from 'react';
 
 function Category(props) {
     const [isChecked, setChecked] = useState(false)

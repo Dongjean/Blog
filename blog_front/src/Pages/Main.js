@@ -1,6 +1,8 @@
-import {React, useState, useEffect, useRef} from 'react';
+//Components imports
 import BlogPost from '../Components/BlogPost.js'
 import Category from '../Components/Category.js';
+
+import {React, useState, useEffect, useRef} from 'react';
 
 function Main(props) {
     const [Posts, setPosts] = useState(null)

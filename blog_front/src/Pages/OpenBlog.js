@@ -1,7 +1,9 @@
-import {useLocation} from 'react-router-dom';
-import {useState, useEffect} from 'react';
+//Components imports
 import CommentsSection from '../Components/CommentsSection';
 import LikesSection from '../Components/LikesSection';
+
+import {useState, useEffect} from 'react';
+import {useLocation} from 'react-router-dom';
 
 function OpenBlog(props) {
     const Data = useLocation().state; //get data about Post from App.js

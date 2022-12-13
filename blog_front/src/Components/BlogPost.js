@@ -1,4 +1,7 @@
+//Components imports
 import LikesSection from './LikesSection';
+
+import React from 'react';
 
 function BlogPost(props) {
     const PostID = props.Post.PostID;

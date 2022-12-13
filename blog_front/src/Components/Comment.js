@@ -1,3 +1,5 @@
+import React from 'react';
+
 function Comment(props) {
     const isViewerAuthor = (props.CurrUser == props.CommentData.username); //isViewerAuthor is true if Data.CurrUser = Data.Username, AKA the viewer is the author of the post
 
