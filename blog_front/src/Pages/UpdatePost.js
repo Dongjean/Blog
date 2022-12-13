@@ -94,7 +94,7 @@ function UpdatePost() {
                 {/* Displays the Selectedcategories */}
                 {SelectedCats ? SelectedCats.map(Cat => {
                     return (
-                        <div>
+                        <div key={Cat.categoryid}>
                             <UpdateCategory SelectCat={SelectCat} DeselectCat={DeselectCat} Cat={Cat} Checked={true} />
                         </div>
                     )
@@ -103,7 +103,7 @@ function UpdatePost() {
                 {/* Displays the Selectedcategories */}
                 {UnselectedCats ? UnselectedCats.map(Cat => {
                     return (
-                        <div>
+                        <div key={Cat.categoryid}>
                             <UpdateCategory SelectCat={SelectCat} DeselectCat={DeselectCat} Cat={Cat} Checked={false} />
                         </div>
                     )

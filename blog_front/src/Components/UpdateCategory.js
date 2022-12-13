@@ -13,7 +13,7 @@ function UpdateCategory(props) {
 
     return (
         <div key={Cat.categoryid}>
-            <input type='checkbox' onClick={() => UpdateCateSelection(Cat.categoryid, Cat.category)} checked={props.Checked} />
+            <input type='checkbox' onClick={() => UpdateCateSelection(Cat.categoryid, Cat.category)} checked={props.Checked} readOnly/> {/* made checkbox readonly for this method as we re-render each time it is clicked */}
             {Cat.category}
         </div>
     )

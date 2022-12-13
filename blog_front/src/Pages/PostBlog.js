@@ -63,7 +63,7 @@ function PostBlog(props) {
                 Categories: {Cats ? Cats.map(Cat => {
                     return (
                         <div key={Cat.categoryid}>
-                            <input type='checkbox' onClick={() => AddCat(Cat.categoryid)}/> {/* Checkbox for category */}
+                            <input type='checkbox' onClick={() => AddCat(Cat.categoryid)} readOnly/> {/* Checkbox for category, made checkbox readonly for this method as we re-render each time it is clicked */}
                             {Cat.category}
                         </div>
                     )

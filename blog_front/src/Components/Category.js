@@ -36,7 +36,7 @@ function Category(props) {
 
     return (
         <div>
-            <input type='checkbox' onClick={CatClicked} checked={isChecked} />
+            <input type='checkbox' onClick={CatClicked} checked={isChecked} readOnly/> {/* made checkbox readonly for this method as we re-render each time it is clicked */}
             {props.Cat.category}
         </div>
     )
