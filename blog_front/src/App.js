@@ -65,10 +65,10 @@ function App() {
         <Route path='/' exact element={<MainPage OpenBlog={OpenBlog} UpdatePost={UpdatePost} CurrUser={CurrUser} />} /> {/* Route to the Main Page*/}
         <Route path='/signup' exact element={<SignupPage Login={Login} />} /> {/* Route to the Signup Page*/}
         <Route path='/login' exact element={<LoginPage Login={Login} />} /> {/* Route to the Login Page */}
-        <Route path='/postblog' exact element={<PostBlogPage Author={CurrUser}/>} /> {/* Route to the Page to post a blog*/}
+        <Route path='/postblog' exact element={<PostBlogPage Login={Login} DisplayName={Display} Author={CurrUser} />} /> {/* Route to the Page to post a blog*/}
         <Route path='/openblog' exact element={<OpenBlogPage Login={Login} UpdatePost={UpdatePost} />} /> {/* Route to the Page for an opened blog */}
-        <Route path='/createcategory' exact element={<AddCategory CurrUser={CurrUser} DisplayName={Display} Login={Login} />} /> {/* Route to the Page to create a new category */}
-        <Route path='/updatepost' exact element={<UpdatePostPage />} /> {/* Route to the Page to update a Post */}
+        <Route path='/createcategory' exact element={<AddCategory Login={Login} CurrUser={CurrUser} DisplayName={Display} />} /> {/* Route to the Page to create a new category */}
+        <Route path='/updatepost' exact element={<UpdatePostPage Login={Login} CurrUser={CurrUser} DisplayName={Display} />} /> {/* Route to the Page to update a Post */}
       </Routes>
     </div>
   );

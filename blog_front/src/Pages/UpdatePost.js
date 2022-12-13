@@ -2,7 +2,7 @@ import { React, useRef, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import UpdateCategory from '../Components/UpdateCategory.js';
 
-function UpdatePost() {
+function UpdatePost(props) {
     const OGPost = useLocation().state;
     const TitleRef = useRef();
     const ImageRef = useRef();
@@ -41,16 +41,18 @@ function UpdatePost() {
         fetch('http://localhost:3001/updateblog', {
             method: 'POST',
             body: FD
-        })
+        }).then(
+            res => res.json()
+        ).then(
+            props.Login(props.CurrUser, props.DisplayName)
+        )
     }
 
     //gets all categories
     function GetAllCats() {
 
         fetch('http://localhost:3001/getallcats').then( //fetches all the categories from backend
-            res => {
-                return res.json()
-            }
+            res => res.json()
         ).then(
             response => {
                 const temp = response.res.filter(Cat => Cat.categoryid !== 0) //response.res is an array of Categories, and set temp to be all categories except All with CategoryID 0

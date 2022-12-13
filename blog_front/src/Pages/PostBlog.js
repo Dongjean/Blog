@@ -33,14 +33,16 @@ function PostBlog(props) {
         fetch('http://localhost:3001/postblog', {
             method: 'POST',
             body: FD
-        })
+        }).then(
+            res => res.json()
+        ).then(
+            props.Login(Author, props.DisplayName)
+        )
     }
 
     function GetAllCats() {
         fetch('http://localhost:3001/getallcats').then( //fetches all the categories from backend
-            res => {
-                return res.json()
-            }
+            res => res.json()
         ).then(
             response => {
                 const PostCats = response.res.filter(Cat => Cat.categoryid !== 0) //response is an array of Categories, and set PostCats to be all categories except All with CategoryID 0
