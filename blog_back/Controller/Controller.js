@@ -6,8 +6,8 @@ const Servicer = require('../Servicer/Servicer.js')
 
 //All the Routes
 
-router.post('/login', (req, res) => {
-    const Data = req.body; //get the data in the body of the post request
+router.get('/login/:Username/:Password', (req, res) => {
+    const Data = req.params; //get the data in the parameters
     Servicer.LoginServicer(Data).then(response => res.json(response)) //pass all the received data into the Service layer to be processed and then respond with the returned response
 })
 
