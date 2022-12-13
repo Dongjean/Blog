@@ -76,4 +76,15 @@ router.post('/addcategory', (req, res) => {
     Servicer.AddCategoryServicer(Data).then(response => res.json(response)) //pass all the received data into the Service layer to be processed and then respond with the returned response
 })
 
+router.get('/getcategories/:PostID', (req, res) => {
+    const Data = req.params;
+    Servicer.GetCategoriesServicer(Data).then(response => res.json(response)) //pass all the received data into the Service layer to be processed and then respond with the returned response
+})
+
+router.post('/updateblog', fileUpload({createParentPath: true}) /*use the middleware for file upload just for this route*/, (req, res) => {
+    const Image = req.files['Image']; //get the information of the Image
+    const Data = req.body; //get the rest of the data
+    Servicer.UpdateBlogServicer(Data, Image).then(response => res.json(response)) //pass all the received data into the Service layer to be processed and then respond with the returned response
+})
+
 module.exports = router;

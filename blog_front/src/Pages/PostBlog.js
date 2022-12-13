@@ -11,6 +11,7 @@ function PostBlog(props) {
     useEffect(() => {
         GetAllCats()
     }, [])
+    
     function addpost (event) {
         event.preventDefault(); //prevent form from refreshing upon submit
 
@@ -66,7 +67,7 @@ function PostBlog(props) {
                             {Cat.category}
                         </div>
                     )
-                }) : <div>hi</div>} <br />
+                }) : null} <br />
                 Post Image: <input type='file' required ref={ImageRef} /> <br />
                 <textarea required ref={PostTextRef} rows='4' cols='50'></textarea> <br />
                 <input type='submit' value='submit' />

@@ -155,7 +155,8 @@ async function PostBlogServicer (Data, Image) {
                 }
             }
 
-            if(extension == fileextension) { //if the current file's extension is the same as that of the image we want to add, we must make sure their names are different
+            // side node: made the comparison into uppercase because .png=.PNG, etc...
+            if(extension.toUpperCase() == fileextension.toUpperCase()) { //if the current file's extension is the same as that of the image we want to add, we must make sure their names are different
                 
                 //assigns name to be an integer that is 1 larger than the largest integer with the same extension
                 //thus, name + extension is now unique in the directory
@@ -176,7 +177,7 @@ async function PostBlogServicer (Data, Image) {
     } catch(err) {
         console.log(err)
     }
-    
+    console.log(ImageDir)
     //getting details about the blog post
     const Title = Data.Title
     const PostText = Data.PostText
@@ -252,6 +253,7 @@ async function DeleteBlogServicer(Data) {
             const ImgDir = result.rows[0].imgdir
             fs.promises.unlink(ImgDir) //delete the image file at the directory ImgDir
             await client.query(`DELETE FROM Comments WHERE PostID=$1`, [PostID]) //Delete all Comments related to this Post
+            await client.query(`DELETE FROM PostCategories WHERE POSTID=$1`, [PostID]) //Delete all the entries in PostCategories
             await client.query(`DELETE FROM BlogPost WHERE PostID=$1`, [PostID]) //Delete the Post with PostID given in Data from the DB
         } catch(err) {
             console.log(err)
@@ -503,4 +505,121 @@ async function AddCategoryServicer(Data) {
     return {res: 'success!'}
 }
 
-module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer, GetLikesCountServicer, GetLikedStateServicer, AddLikeServicer, RemoveLikeServicer, GetAllCatsServicer, AddCategoryServicer };
+async function GetCategoriesServicer(Data) {
+    var Cats;
+
+    //connecting to DB
+    const client = new Client({
+        user: 'postgres',
+        database: 'blogserver',
+        password: 'sdj20041229',
+        port: 5432,
+        host: 'localhost',
+      })
+    client.connect();
+
+    try {
+        const result = await client.query(`SELECT X.CategoryID, X.Category FROM Categories X JOIN PostCategories Y ON X.CategoryID=Y.CategoryID WHERE Y.PostID=$1`, [Data.PostID])
+        Cats = result.rows
+    } catch(err) {
+        console.log(err)
+    } finally {
+        client.end();
+    }
+    return {res: Cats}
+}
+
+async function UpdateBlogServicer(Data, Image) {
+    //get data from Data
+    const PostID = Data.PostID
+    const Title = Data.Title
+    const PostText = Data.PostText
+    const ImgName = Image.name
+    const Categories = JSON.parse(Data.Categories) //Categories was sent as a string so convert back to array
+
+    //connecting to DB
+    const client = new Client({
+        user: 'postgres',
+        database: 'blogserver',
+        password: 'sdj20041229',
+        port: 5432,
+        host: 'localhost',
+      })
+    client.connect();
+
+    //get extension of the image file
+    var extension;
+    for (var i = Image.name.length - 1; i >= 0; i--) {
+        if (Image.name[i] == '.') {
+            extension = Image.name.slice(i)
+            break
+        }
+    }
+
+    //get directory of folder where image is to be stored
+    const FileDir = path.join(__dirname, '../Images')
+
+    //get a unique file name and store the image as that name in server
+    var ImageDir;
+    try {
+        const files = await fs.promises.readdir(FileDir) //read all file names in the Images blog_post/blog_back/Images directory
+        var name = 1; //image names start with 1
+        files.forEach(function (file) { //iterate through the file names
+            var filename;
+            var fileextension;
+
+            //separate the file name and extensions and store them in filename and fileextension respectively
+            for (var i=file.length-1; i>=0; i--) { 
+                if (file[i] == '.') {
+                    fileextension = file.slice(i)
+                    filename = parseInt(file.slice(0, i)) //store the fiename as an integer because it makes it easier to get unique file names for our new Image later
+                }
+            }
+
+            // side node: made the comparison into uppercase because .png=.PNG, etc...
+            if(extension.toUpperCase() == fileextension.toUpperCase()) { //if the current file's extension is the same as that of the image we want to add, we must make sure their names are different
+                
+                //assigns name to be an integer that is 1 larger than the largest integer with the same extension
+                //thus, name + extension is now unique in the directory
+                if (name <= filename) {
+                    name = filename + 1;
+                }
+            }
+        });
+        //the unique Image file name
+        const newIMGname = name + extension
+        
+        //save the Image in the directory
+        Image.mv(`./Images/${newIMGname}`)
+        
+        //get directory of the file to be saved in DB for future use
+        ImageDir = path.join(__dirname, `../Images/${newIMGname}`)
+
+    } catch(err) {
+        console.log(err)
+    }
+
+    try {
+        const result = await client.query(`SELECT ImgDir FROM BlogPost WHERE PostID = $1`, [PostID]) //query the DB for the directory of the image to delete from server
+        const OGImageDir = result.rows[0].imgdir //get the directory of the old image file
+
+        //delete the old image file from the directory
+        fs.promises.unlink(OGImageDir)
+
+        await client.query(`UPDATE BlogPost SET Title=$1, PostText=$2, ImgName=$3, ImgDir=$4 WHERE PostID=$5`, [Title, PostText, ImgName, ImageDir, PostID]) //Update the DB for BlogPost table
+
+        //Update the PostCategories table
+        await client.query(`DELETE FROM PostCategories WHERE PostID=$1 AND CategoryID!=$2`, [PostID, 0]) //Delete the original categories from PostCategories
+        for (var i=0; i<Categories.length; i++) {
+            const Category = Categories[i]
+            await client.query(`INSERT INTO PostCategories VALUES($1, $2)`, [Category.categoryid, PostID]) //iterate through Categories to add everything in
+        }
+    } catch(err) {
+        console.log(err)
+    } finally {
+        client.end();
+    }
+    return {res: 'success!'}
+}
+
+module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer, GetLikesCountServicer, GetLikedStateServicer, AddLikeServicer, RemoveLikeServicer, GetAllCatsServicer, AddCategoryServicer, GetCategoriesServicer, UpdateBlogServicer };

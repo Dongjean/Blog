@@ -4,6 +4,7 @@ import SignupPage from './Pages/Signup.js';
 import PostBlogPage from './Pages/PostBlog.js';
 import OpenBlogPage from './Pages/OpenBlog.js';
 import AddCategory from './Components/AddCategory.js';
+import UpdatePostPage from './Pages/UpdatePost.js';
 import {Routes, Route, useNavigate, Link} from 'react-router-dom';
 import {React, useState} from 'react';
 
@@ -43,6 +44,12 @@ function App() {
     navigate('/openblog', {state: Data})
   }
   
+  function UpdatePost(Post, Cats) {
+    var Data = Post;
+    Data.Cats = Cats;
+    navigate('/updatepost', {state: Data})
+  }
+  
   return (
     <div>
       { isLogin ? <div>Hello, {Display}!</div> : null } {/* display this only if isLogin is true-the user is logged in, display null otherwise */}
@@ -54,12 +61,13 @@ function App() {
       { isLogin ? <button onClick={Logout}>Logout</button> : null } {/* Display the Logout button only if isLogin is true-if there is a user logged in */}
 
       <Routes>
-        <Route path='/' exact element={<MainPage OpenBlog={OpenBlog} CurrUser={CurrUser} />} /> {/* Route to the Main Page*/}
+        <Route path='/' exact element={<MainPage OpenBlog={OpenBlog} UpdatePost={UpdatePost} CurrUser={CurrUser} />} /> {/* Route to the Main Page*/}
         <Route path='/signup' exact element={<SignupPage Login={Login} />} /> {/* Route to the Signup Page*/}
         <Route path='/login' exact element={<LoginPage Login={Login} />} /> {/* Route to the Login Page */}
         <Route path='/postblog' exact element={<PostBlogPage Author={CurrUser}/>} /> {/* Route to the Page to post a blog*/}
-        <Route path='/openblog' exact element={<OpenBlogPage Login={Login} />} /> {/* Route to the Page for an opened blog */}
+        <Route path='/openblog' exact element={<OpenBlogPage Login={Login} UpdatePost={UpdatePost} />} /> {/* Route to the Page for an opened blog */}
         <Route path='/createcategory' exact element={<AddCategory CurrUser={CurrUser} DisplayName={Display} Login={Login} />} /> {/* Route to the Page to create a new category */}
+        <Route path='/updatepost' exact element={<UpdatePostPage />} />
       </Routes>
     </div>
   );
