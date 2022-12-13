@@ -195,7 +195,7 @@ async function GetBlogs(Data) {
         password: 'sdj20041229',
         port: 5432,
         host: 'localhost',
-      })
+    })
     client.connect();
 
     var Posts = [];

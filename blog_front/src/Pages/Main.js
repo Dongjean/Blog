@@ -1,10 +1,12 @@
-import {React, useState, useEffect} from 'react';
+import {React, useState, useEffect, useRef} from 'react';
 import BlogPost from '../Components/BlogPost.js'
+import Category from '../Components/Category.js';
 
 function Main(props) {
     const [Posts, setPosts] = useState(null)
     const [Cats, setCats] = useState(null)
-    const [SelectedCats, setSelectedCats] = useState([{ categoryid: 0, category: 'All'}])
+    const nullCat = {categoryid: -1, category: 'null'}
+    const SelectedCats = useRef([nullCat])
 
     const CurrUser = props.CurrUser;
 
@@ -13,19 +15,23 @@ function Main(props) {
         GetAllCats()
     }, [])
 
-    function GetBlogs(Cats) {
+    async function GetBlogs(Cats) {
         const StrCats = Cats.map(Cat => {return Cat.categoryid}).toString() //converts the array of Categories into a string format to be sent in GET request
 
         fetch('http://localhost:3001/getblogs/' + StrCats).then( //fetches the blog posts under the requested categories from backend
-            res => {
-                return res.json()
-            }
+        res => {
+            return res.json()
+        }
         ).then(
             response => {
                 const Posts = response.res //response is an array of Posts if blog posts exists, and null otherwise
                 setPosts(Posts) //sets the Posts state to the response
             }
         )
+    }
+
+    function OpenBlog(Post) {
+        props.OpenBlog(Post)
     }
 
     function GetAllCats() {
@@ -37,14 +43,24 @@ function Main(props) {
             response => {
                 const AllCats = response.res //response is an array of Categories
                 setCats(AllCats) //sets the Categories state to the response
-
-                GetBlogs(SelectedCats) //get all the blogs for all categories after the categories have been received
             }
         )
     }
 
-    function onClick(Post) {
-        props.OpenBlog(Post)
+    function AddCatSelection(Cat) {
+        SelectedCats.current = SelectedCats.current.filter(SelectedCat => SelectedCat.categoryid !== -1)
+        SelectedCats.current.push(Cat)
+        GetBlogs(SelectedCats.current) //get all the blogs for all categories after the selected categories have been modified
+    }
+
+    function RemoveCatSelection(Cat) {
+        SelectedCats.current = SelectedCats.current.filter(SelectedCat => SelectedCat.categoryid !== Cat.categoryid)
+
+        //if after removal SelectedCats.current is empty, add the nullCat
+        if (SelectedCats.current.length == 0) {
+            SelectedCats.current.push(nullCat)
+        }
+        GetBlogs(SelectedCats.current) //get all the blogs for all categories after the selected categories have been modified
     }
 
     return (
@@ -52,16 +68,14 @@ function Main(props) {
             {/* Displays All Categories if it is not null */}
             {Cats ? Cats.map(Cat => {
                 return (
-                    <div key={Cat.categoryid}>
-                        {Cat.category}
-                    </div>
+                    <Category key={Cat.categoryid} Cat={Cat} AddCatSelection={AddCatSelection} RemoveCatSelection={RemoveCatSelection} />
                 )
             }) : null}
             
             {Posts ? Posts.map(Post => { {/* iterate through the Posts array if Posts is not null, and each post is Post */}
                 return (
                     <div key={Post.PostID}>
-                        <button onClick={() => onClick(Post)}> {/* Call the onClick method with parameter Post */}
+                        <button onClick={() => OpenBlog(Post)}> {/* Call the OpenBlog method with parameter Post */}
                             <BlogPost Post={Post} CurrUser={CurrUser} /> {/* Display the specific Blog Post, passing in information of Post as a prop Post */}
                         </button>
                         <br />
