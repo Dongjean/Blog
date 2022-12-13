@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const Servicer = require('../../Servicer/Servicer.js')
+const Servicer = require('../../Services/CategoryServices.js');
 
 router.get('/getallcats', (req, res) => {
     Servicer.GetAllCatsServicer().then(response => res.json(response)) //call the Service layer for a reponse, and respond with this response

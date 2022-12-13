@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const Servicer = require('../../Servicer/Servicer.js')
+const Servicer = require('../../Services/CommentServices.js');
 
 router.get('/getcomments/:PostID', (req, res) => {
     const Data = req.params

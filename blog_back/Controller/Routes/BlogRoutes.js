@@ -2,7 +2,7 @@ const express = require("express");
 const fileUpload = require('express-fileupload');
 const router = express.Router();
 
-const Servicer = require('../../Servicer/Servicer.js')
+const Servicer = require('../../Services/BlogPostServices');
 
 router.post('/postblog', fileUpload({createParentPath: true}) /*use the middleware for file upload just for this route*/, (req, res) => {
     const Image = req.files['Image']; //get the information of the Image
