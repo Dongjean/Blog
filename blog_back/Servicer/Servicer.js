@@ -210,7 +210,6 @@ async function GetBlogs(Data) {
 
     var Posts = [];
     try {
-        console.log(Cats)
         const result = await client.query(`SELECT DISTINCT X.PostID, X.Title, X.PostText, X.ImgName, X.ImgDir, X.Username, X.DisplayName FROM (SELECT BlogPost.PostID, BlogPost.Title, BlogPost.PostText, BlogPost.ImgName, BlogPost.ImgDir, Users.Username, Users.DisplayName FROM BlogPost JOIN Users ON BlogPost.Username = Users.Username) X JOIN PostCategories Y ON X.PostID=Y.PostID WHERE Y.CategoryID = ANY($1::int[])`, [Cats]) //select the blog posts from DB
         if (result.rows.length == 0) { //if no posts exists in DB, end connection to DB and respond with a null
             client.end();
@@ -359,7 +358,7 @@ async function GetLikesCountServicer(Data) {
       })
     client.connect();
     
-    try{
+    try {
         const result = await client.query(`SELECT COUNT(Username) AS LikesCount FROM Likes WHERE PostID=$1 GROUP BY PostID`, [Data.PostID]) //querythe DB to get the number of likes for a post
         if(result.rows.length == 0) {
             LikesCount = 0;
@@ -368,7 +367,7 @@ async function GetLikesCountServicer(Data) {
         }
     } catch(err) {
         console.log(err)
-    } finally{
+    } finally {
         client.end();
     }
     return {res: LikesCount}
@@ -387,7 +386,7 @@ async function GetLikedStateServicer(Data) {
       })
     client.connect();
 
-    try{
+    try {
         const result = await client.query(`SELECT Username FROM Likes WHERE PostID=$1`, [Data.PostID]) //query the DB to get the number of likes for a post
         for (var i=0; i<result.rows.length; i++) { //iterates through the resultant response from the query
             if (result.rows[i].username == Data.CurrUser) {
@@ -397,7 +396,7 @@ async function GetLikedStateServicer(Data) {
         }
     } catch(err) {
         console.log(err)
-    } finally{
+    } finally {
         client.end();
     }
     return {res: isLiked}
@@ -415,11 +414,11 @@ async function AddLikeServicer(Data) {
       })
     client.connect();
 
-    try{
+    try {
         const result = await client.query(`INSERT INTO Likes VALUES($1, $2)`, [Data.PostID, Data.CurrUser]) //Adds the like record into the DB
     } catch(err) {
         console.log(err)
-    } finally{
+    } finally {
         client.end();
     }
     return {res: 'success!'}
@@ -437,11 +436,11 @@ async function RemoveLikeServicer(Data) {
       })
     client.connect();
 
-    try{
+    try {
         const result = await client.query(`DELETE FROM Likes WHERE PostID=$1 AND Username=$2`, [Data.PostID, Data.CurrUser]) //Removes the like record from the DB
     } catch(err) {
         console.log(err)
-    } finally{
+    } finally {
         client.end();
     }
     return {res: 'success!'}
@@ -460,16 +459,48 @@ async function GetAllCatsServicer() {
       })
     client.connect();
 
-    try{
+    try {
         const result = await client.query(`SELECT * FROM Categories ORDER BY CategoryID ASC`) //Queries the DB for all Categories
         Cats = result.rows
 
     } catch(err) {
         console.log(err)
-    } finally{
+    } finally {
         client.end();
     }
     return {res: Cats}
 }
 
-module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer, GetLikesCountServicer, GetLikedStateServicer, AddLikeServicer, RemoveLikeServicer, GetAllCatsServicer };
+async function AddCategoryServicer(Data) {
+    const CategoryName = Data.CategoryName
+    var CategoryID = 1; //CategoryID starts from 1 since 0 is All
+
+    //connecting to DB
+    const client = new Client({
+        user: 'postgres',
+        database: 'blogserver',
+        password: 'sdj20041229',
+        port: 5432,
+        host: 'localhost',
+      })
+    client.connect();
+
+    try {
+        //getting a unique CommentID that doesnt already exist in the database
+        const result = await client.query(`SELECT CategoryID FROM Categories ORDER BY CategoryID ASC`)
+        result.rows.forEach((row) => {
+            if (CategoryID == row.categoryid) {
+                CategoryID++;
+            }
+        })
+
+        await client.query(`INSERT INTO Categories VALUES($1, $2)`, [CategoryID, CategoryName]) //Queries the DB for all Categories
+    } catch(err) {
+        console.log(err)
+    } finally {
+        client.end();
+    }
+    return {res: 'success!'}
+}
+
+module.exports = { LoginServicer, SignupServicer, PostBlogServicer, GetBlogs, DeleteBlogServicer, GetCommentsServicer, AddCommentServicer, DeleteCommentServicer, GetLikesCountServicer, GetLikedStateServicer, AddLikeServicer, RemoveLikeServicer, GetAllCatsServicer, AddCategoryServicer };

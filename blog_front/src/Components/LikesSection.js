@@ -28,7 +28,7 @@ function LikesSection(props) {
     }
 
     function Like(event) {
-        event.stopPropagation()
+        event.stopPropagation() //prevents the onClick of the button in the parent class from interfering with this like/unlike button
         fetch('http://localhost:3001/addlike', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -42,7 +42,7 @@ function LikesSection(props) {
     }
 
     function Unlike(event) {
-        event.stopPropagation()
+        event.stopPropagation() //prevents the onClick of the button in the parent class from interfering with this like/unlike button
         fetch('http://localhost:3001/removelike', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},

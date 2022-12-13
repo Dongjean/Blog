@@ -2,7 +2,8 @@ import LoginPage from './Pages/Login.js';
 import MainPage from './Pages/Main.js';
 import SignupPage from './Pages/Signup.js';
 import PostBlogPage from './Pages/PostBlog.js';
-import OpenBlogPage from './Pages/OpenBlog.js'
+import OpenBlogPage from './Pages/OpenBlog.js';
+import AddCategory from './Components/AddCategory.js';
 import {Routes, Route, useNavigate, Link} from 'react-router-dom';
 import {React, useState} from 'react';
 
@@ -39,7 +40,6 @@ function App() {
   function OpenBlog(Post) {
     var Data = Post;
     Data.CurrUser = CurrUser;
-    console.log(Data)
     navigate('/openblog', {state: Data})
   }
   
@@ -50,6 +50,7 @@ function App() {
       <Link to='signup'>Singup</Link> {/* Link to Signup Page */}
       <Link to='/login'>Login</Link> {/* Link to Login Page */}
       { isLogin ? <Link to='/postblog'>Post</Link> : null } {/* Link to the Page to post a blog, this Link is only display if isLogin is true-if a user is logged in, displaying null otherwise */}
+      { isLogin ? <Link to='/createcategory'>Create-Category</Link> : null } {/* Display the Create Category button only if isLogin is true-if there is a user logged in */}
       { isLogin ? <button onClick={Logout}>Logout</button> : null } {/* Display the Logout button only if isLogin is true-if there is a user logged in */}
 
       <Routes>
@@ -58,6 +59,7 @@ function App() {
         <Route path='/login' exact element={<LoginPage Login={Login} />} /> {/* Route to the Login Page */}
         <Route path='/postblog' exact element={<PostBlogPage Author={CurrUser}/>} /> {/* Route to the Page to post a blog*/}
         <Route path='/openblog' exact element={<OpenBlogPage Login={Login} />} /> {/* Route to the Page for an opened blog */}
+        <Route path='/createcategory' exact element={<AddCategory CurrUser={CurrUser} DisplayName={Display} Login={Login} />} /> {/* Route to the Page to create a new category */}
       </Routes>
     </div>
   );
