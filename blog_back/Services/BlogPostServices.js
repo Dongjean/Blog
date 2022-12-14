@@ -176,6 +176,7 @@ async function DeleteBlogServicer(Data) {
         fs.promises.unlink(ImgDir) //delete the image file at the directory ImgDir
         await client.query(`DELETE FROM Comments WHERE PostID=$1`, [PostID]) //Delete all Comments related to this Post
         await client.query(`DELETE FROM PostCategories WHERE POSTID=$1`, [PostID]) //Delete all the entries in PostCategories
+        await client.query(`DELETE FROM Likes WHERE PostID=$1`, [PostID]) //Delete all the entries in Likes
         await client.query(`DELETE FROM BlogPost WHERE PostID=$1`, [PostID]) //Delete the Post with PostID given in Data from the DB
     } catch(err) {
         console.log(err)
