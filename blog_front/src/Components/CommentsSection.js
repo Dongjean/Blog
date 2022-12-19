@@ -13,7 +13,7 @@ function CommentsSection(props) {
         const NewComment = NewCommentRef.current.value; //get New comment from the form
 
         //POST request to /addcomment with information on the new comment in its body to be added into DB
-        await fetch('http://localhost:3001/addcomment', {
+        await fetch('/addcomment', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({PostID: props.PostID, NewComment: NewComment, Username: props.CurrUser})
@@ -24,7 +24,7 @@ function CommentsSection(props) {
     async function DeleteComment(CommentID) {
 
         //send a POST request to /deletecomment with CommentID in its body
-        await fetch('http://localhost:3001/deletecomment', {
+        await fetch('/deletecomment', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({CommentID: CommentID})

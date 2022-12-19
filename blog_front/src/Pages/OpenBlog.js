@@ -19,7 +19,7 @@ function OpenBlog(props) {
     }, [])
 
     function getCats() {
-        fetch('http://localhost:3001/getcategories/' + PostID).then(
+        fetch('/getcategories/' + PostID).then(
             res => res.json()
         ).then(
             response => {
@@ -32,7 +32,7 @@ function OpenBlog(props) {
     async function DeletePost() {
 
         //send a POST request to /deleteblog with PostID in its body
-        await fetch('http://localhost:3001/deleteblog', {
+        await fetch('/deleteblog', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({PostID: PostID})
@@ -44,7 +44,7 @@ function OpenBlog(props) {
     function getComments() {
 
         //send a GET request to /getcomments with PostID as a parameter
-        fetch('http://localhost:3001/getcomments/' + PostID).then(
+        fetch('/getcomments/' + PostID).then(
             res => res.json()
         ).then(
             response => {

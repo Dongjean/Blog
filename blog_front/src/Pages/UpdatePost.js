@@ -40,7 +40,7 @@ function UpdatePost(props) {
         FD.append('PostID', OGPost.PostID)
 
         //send a POST request to backend to post the blog with data FD
-        fetch('http://localhost:3001/updateblog', {
+        fetch('/updateblog', {
             method: 'POST',
             body: FD
         }).then(
@@ -53,7 +53,7 @@ function UpdatePost(props) {
     //gets all categories
     function GetAllCats() {
 
-        fetch('http://localhost:3001/getallcats').then( //fetches all the categories from backend
+        fetch('/getallcats').then( //fetches all the categories from backend
             res => res.json()
         ).then(
             response => {

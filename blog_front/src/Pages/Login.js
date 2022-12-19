@@ -13,7 +13,7 @@ function Login(props) {
         const Password = PasswordRef.current.value;
 
         //send post request with username and password in its body to check for username validity
-        fetch('http://localhost:3001/login/' + Username + '/' + Password).then(
+        fetch('/login/' + Username + '/' + Password).then(
             res => {
                 return res.json()
             }

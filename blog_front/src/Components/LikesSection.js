@@ -17,7 +17,7 @@ function LikesSection(props) {
     //method to get the number of likes for the post
     function GetLikesCount() {
         //send a GET request to /getlikes with PostID as a parameter
-        fetch('http://localhost:3001/getlikescount/' + PostID).then(
+        fetch('/getlikescount/' + PostID).then(
             res => res.json()
         ).then(
             response => {
@@ -29,7 +29,7 @@ function LikesSection(props) {
 
     function Like(event) {
         event.stopPropagation() //prevents the onClick of the button in the parent class from interfering with this like/unlike button
-        fetch('http://localhost:3001/addlike', {
+        fetch('/addlike', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({PostID: PostID, CurrUser: CurrUser})
@@ -43,7 +43,7 @@ function LikesSection(props) {
 
     function Unlike(event) {
         event.stopPropagation() //prevents the onClick of the button in the parent class from interfering with this like/unlike button
-        fetch('http://localhost:3001/removelike', {
+        fetch('/removelike', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({PostID: PostID, CurrUser: CurrUser})
@@ -57,7 +57,7 @@ function LikesSection(props) {
 
     //function called to get the state of whether or not the post is liked by user
     function GetLikeState() {
-        fetch('http://localhost:3001/getlikestate/' + PostID + '/' + CurrUser).then(
+        fetch('/getlikestate/' + PostID + '/' + CurrUser).then(
             res => res.json()
         ).then(
             response => {

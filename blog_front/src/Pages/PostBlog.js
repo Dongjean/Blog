@@ -30,7 +30,7 @@ function PostBlog(props) {
         FD.append('Categories', PostCats.current);
 
         //send a POST request to backend to post the blog with data FD
-        fetch('http://localhost:3001/postblog', {
+        fetch('/postblog', {
             method: 'POST',
             body: FD
         }).then(
@@ -41,7 +41,7 @@ function PostBlog(props) {
     }
 
     function GetAllCats() {
-        fetch('http://localhost:3001/getallcats').then( //fetches all the categories from backend
+        fetch('/getallcats').then( //fetches all the categories from backend
             res => res.json()
         ).then(
             response => {

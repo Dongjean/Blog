@@ -10,7 +10,7 @@ function AddCategory(props) {
         const CurrUser = props.CurrUser
         const DisplayName = props.DisplayName
 
-        fetch('http://localhost:3001/addcategory', { //Post request to add new category
+        fetch('/addcategory', { //Post request to add new category
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({CategoryName: CategoryName})

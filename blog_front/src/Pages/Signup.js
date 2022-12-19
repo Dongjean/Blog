@@ -28,7 +28,7 @@ function Signup(props) {
         }
 
         //validity check for Username
-        fetch('http://localhost:3001/signup', { //send POST request to the backend with the new account credentials to check if the username already exists, and adds the account to DB if it is
+        fetch('/signup', { //send POST request to the backend with the new account credentials to check if the username already exists, and adds the account to DB if it is
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({NUsername: NUser, NPassword: NPW, NDisplay: NDisplay, isPWValid: isPWValid})
